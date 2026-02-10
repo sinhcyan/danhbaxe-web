@@ -3,7 +3,15 @@ import { AIAnalysisResult } from "../types";
 
 export const analyzeRouteWithAI = async (input: string | { data: string, mimeType: string }): Promise<AIAnalysisResult | null> => {
   // STRICTLY use process.env.API_KEY as per guidelines
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // @ts-ignore: process.env is polyfilled in vite.config.ts and declared in vite-env.d.ts
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.error("API_KEY is missing in environment variables");
+    return null;
+  }
+
+  const ai = new GoogleGenAI({ apiKey: apiKey });
   
   const systemInstruction = `You are a data extraction assistant for a Vietnamese transport listing app. 
   Analyze the input text or image (bus ticket, schedule, advertisement) to extract specific route information.
