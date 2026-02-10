@@ -3,14 +3,7 @@ import { AIAnalysisResult } from "../types";
 
 export const analyzeRouteWithAI = async (input: string | { data: string, mimeType: string }): Promise<AIAnalysisResult | null> => {
   // STRICTLY use process.env.API_KEY as per guidelines
-  const apiKey = process.env.API_KEY;
-
-  if (!apiKey) {
-    console.error("API_KEY is missing. Please set the API key in the environment.");
-    return null;
-  }
-
-  const ai = new GoogleGenAI({ apiKey: apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const systemInstruction = `You are a data extraction assistant for a Vietnamese transport listing app. 
   Analyze the input text or image (bus ticket, schedule, advertisement) to extract specific route information.
