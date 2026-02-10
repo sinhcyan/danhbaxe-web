@@ -1,0 +1,7 @@
+{
+  "name": "Danhbaxe.vn - New edit",
+  "description": "Hệ thống tìm kiếm xe khách và vận tải hàng hóa tuyến cố định với công nghệ AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
