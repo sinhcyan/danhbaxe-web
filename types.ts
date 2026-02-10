@@ -1,3 +1,4 @@
+
 export type CarrierStatus = 'published' | 'pending' | 'private';
 export type CarrierType = 'fixed' | 'flexible';
 export type ServiceType = 'passenger' | 'goods' | 'bike';
@@ -16,6 +17,7 @@ export interface Carrier {
   status: CarrierStatus;
   image_url?: string;
   created_at?: string;
+  creator_id?: string; // ID of the user who created this carrier
 }
 
 export interface Route {

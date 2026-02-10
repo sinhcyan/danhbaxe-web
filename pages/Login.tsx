@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (username === 'admin' && password === '123') {
-      sessionStorage.setItem('isAdmin', 'true');
+      login('admin', 'admin', 'admin_master_id');
+      navigate('/admin');
+    } else if (username === 'member' && password === '123') {
+      login('member', 'member', 'member_01_id');
       navigate('/admin');
     } else {
-      setError('Sai thông tin đăng nhập');
+      setError('Sai thông tin đăng nhập. (Gợi ý: admin/123 hoặc member/123)');
     }
   };
 
@@ -22,7 +28,7 @@ const Login: React.FC = () => {
         <div className="w-full max-w-md glass-heavy rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-500">
             <div className="flex flex-col items-center mb-10">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center text-white text-4xl font-bold mb-6 shadow-xl shadow-blue-500/30">D</div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Admin Portal</h1>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Portal Đăng Nhập</h1>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
