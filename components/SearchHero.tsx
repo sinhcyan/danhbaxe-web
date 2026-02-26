@@ -8,7 +8,7 @@ interface SearchHeroProps {
 const SearchHero: React.FC<SearchHeroProps> = ({ onSearch }) => {
   const [origin, setOrigin] = useState('');
   const [dest, setDest] = useState('');
-  const [timeRange, setTimeRange] = useState<{start: string, end: string} | null>(null);
+  const [timeRange, setTimeRange] = useState<{ start: string, end: string } | null>(null);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,11 +27,11 @@ const SearchHero: React.FC<SearchHeroProps> = ({ onSearch }) => {
           Danhbaxe.vn
         </h1>
         <p className="text-slate-600 text-xl font-medium text-center max-w-lg mx-auto leading-relaxed">
-          Hệ sinh thái tìm kiếm vận tải <span className="text-blue-600 font-bold">thế hệ mới</span>
+          danh bạ xe vận tải <span className="text-blue-600 font-bold">cập nhật thường xuyên</span>
         </p>
       </div>
 
-      <form 
+      <form
         onSubmit={handleSubmit}
         className="w-full flex flex-col md:flex-row items-stretch justify-center gap-4 transition-all"
       >
@@ -87,7 +87,7 @@ const SearchHero: React.FC<SearchHeroProps> = ({ onSearch }) => {
           </button>
         </div>
 
-        <button 
+        <button
           type="submit"
           className="bg-slate-900/90 hover:bg-black backdrop-blur-md text-white px-10 py-4 rounded-3xl font-black transition-all shadow-xl shadow-slate-900/20 flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap text-lg"
         >
@@ -98,7 +98,7 @@ const SearchHero: React.FC<SearchHeroProps> = ({ onSearch }) => {
         </button>
       </form>
 
-      <TimePickerModal 
+      <TimePickerModal
         isOpen={isTimePickerOpen}
         onClose={() => setIsTimePickerOpen(false)}
         onConfirm={setTimeRange}
