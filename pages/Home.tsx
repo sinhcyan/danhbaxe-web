@@ -14,6 +14,11 @@ const Home: React.FC = () => {
   const [showContributeModal, setShowContributeModal] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
+  React.useEffect(() => {
+    // Preload dataset to populate cache immediately on visit
+    supabaseService.getRoutes().catch(console.error);
+  }, []);
+
   const handleSearch = async (origin: string, dest: string, startTime: string, endTime: string) => {
     setLoading(true);
     setSearched(true);
