@@ -2,6 +2,10 @@ import { supabase, isMockMode } from './supabaseClient';
 import { Route } from '../types';
 import { INITIAL_ROUTES, INITIAL_CARRIERS } from '../utils/constants';
 
+let cachedRoutes: Route[] | null = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 // We need getRoutes as a top-level function so searchRoutes can call it 
 // or searchRoutes can use routeService.getRoutes()
 export const routeService = {
@@ -11,6 +15,10 @@ export const routeService = {
                 ...r,
                 carrier: INITIAL_CARRIERS.find(c => c.id === r.carrier_id)
             }));
+        }
+
+        if (cachedRoutes && Date.now() - lastFetchTime < CACHE_DURATION) {
+            return cachedRoutes;
         }
 
         try {
@@ -26,10 +34,14 @@ export const routeService = {
                 }));
             }
 
-            return data.map((item: any) => ({
+            const parsedData = data.map((item: any) => ({
                 ...item,
                 carrier: item.carrier
             })) as Route[];
+
+            cachedRoutes = parsedData;
+            lastFetchTime = Date.now();
+            return parsedData;
         } catch (e) {
             console.error('Unexpected error:', e);
             return INITIAL_ROUTES.map(r => ({ ...r, carrier: INITIAL_CARRIERS.find(c => c.id === r.carrier_id) }));
@@ -41,6 +53,7 @@ export const routeService = {
             console.log("Mock save route:", route);
             return;
         }
+        cachedRoutes = null; // Invalidate cache
         const { carrier, ...routeData } = route;
         const { error } = await supabase.from('routes').insert([routeData]);
         if (error) throw error;
@@ -51,6 +64,7 @@ export const routeService = {
             console.log("Mock update route:", routeId, routeUpdates);
             return;
         }
+        cachedRoutes = null; // Invalidate cache
         const { carrier, ...data } = routeUpdates;
         const { error } = await supabase.from('routes').update(data).eq('id', routeId);
         if (error) throw error;
@@ -58,6 +72,7 @@ export const routeService = {
 
     updateRouteStatus: async (routeId: string, status: 'published' | 'pending') => {
         if (isMockMode) return;
+        cachedRoutes = null; // Invalidate cache
         const { data: route } = await supabase.from('routes').select('carrier_id').eq('id', routeId).single();
         if (route) {
             const { error } = await supabase

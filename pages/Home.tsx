@@ -18,7 +18,6 @@ const Home: React.FC = () => {
     setLoading(true);
     setSearched(true);
     try {
-      await new Promise(r => setTimeout(r, 600));
       const filtered = await supabaseService.searchRoutes(origin, dest, startTime, endTime);
       setResults(filtered);
     } finally {
