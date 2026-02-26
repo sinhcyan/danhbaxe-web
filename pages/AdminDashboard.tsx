@@ -58,6 +58,19 @@ const AdminDashboard: React.FC = () => {
         fetchData();
     };
 
+    const handleDelete = async (routeId: string) => {
+        if (window.confirm('Bạn có thực sự muốn xóa không?')) {
+            try {
+                await supabaseService.deleteRoute(routeId);
+                alert('Đã xóa lộ trình!');
+                fetchData();
+            } catch (error) {
+                console.error("Delete Error:", error);
+                alert('Có lỗi xảy ra khi xóa.');
+            }
+        }
+    };
+
     const handleEdit = (route: Route) => {
         setEditingRouteId(route.id);
         setActiveTab('add');
@@ -154,6 +167,7 @@ const AdminDashboard: React.FC = () => {
                     currentUserRole={role}
                     onApprove={handleApprove}
                     onEdit={handleEdit}
+                    onDelete={handleDelete}
                 />
             )}
 

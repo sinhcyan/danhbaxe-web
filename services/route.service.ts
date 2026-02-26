@@ -83,6 +83,13 @@ export const routeService = {
         }
     },
 
+    deleteRoute: async (routeId: string) => {
+        if (isMockMode) return;
+        cachedRoutes = null; // Invalidate cache
+        const { error } = await supabase.from('routes').delete().eq('id', routeId);
+        if (error) throw error;
+    },
+
     searchRoutes: async (origin: string, dest: string, startTime?: string, endTime?: string): Promise<Route[]> => {
         const allRoutes = await routeService.getRoutes();
 
