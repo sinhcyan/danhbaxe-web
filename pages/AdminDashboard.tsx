@@ -105,7 +105,7 @@ const AdminDashboard: React.FC = () => {
                 await supabaseService.updateCarrier(existingRoute.carrier_id, {
                     name: formData.carrierName,
                     phone: formData.carrierPhone || existingRoute.carrier?.phone,
-                    status: role === 'admin' ? existingRoute.carrier?.status : 'pending'
+                    status: role === 'admin' ? (formData.status || existingRoute.carrier?.status) : 'pending'
                 });
 
                 alert(role === 'admin' ? 'Đã cập nhật thành công!' : 'Đã cập nhật! Tuyến xe đang chờ duyệt lại.');
@@ -173,6 +173,7 @@ const AdminDashboard: React.FC = () => {
 
             {activeTab === 'add' && (
                 <AdminRouteForm
+                    currentUserRole={role}
                     editingRoute={routes.find(r => r.id === editingRouteId) || null}
                     onSave={handleSaveRoute}
                     onCancel={cancelEdit}

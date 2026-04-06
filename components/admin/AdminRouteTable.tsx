@@ -61,8 +61,8 @@ const AdminRouteTable: React.FC<AdminRouteTableProps> = ({ routes, loading, curr
                                         Công khai
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-amber-100/50 text-amber-700 border border-amber-200/50">
-                                        Chờ duyệt
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-red-100/50 text-red-500 border border-red-200/50">
+                                        Ẩn, chờ duyệt
                                     </span>
                                 )}
                             </td>
