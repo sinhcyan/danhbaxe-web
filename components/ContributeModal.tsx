@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TimePickerModal from './TimePickerModal';
 import { supabaseService } from '../services/supabase';
-import { analyzeRouteWithAI } from '../services/geminiService';
+
 import { compressImage } from '../utils/helpers';
 import { Carrier, Route, ServiceType, TimedStop } from '../types';
 
@@ -24,8 +24,7 @@ const ContributeModal: React.FC<ContributeModalProps> = ({ onClose, onSuccess })
   const [carrierType, setCarrierType] = useState<'xe khách' | 'xe tải'>('xe khách');
   const [services, setServices] = useState<ServiceType[]>(['passenger']);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [aiInputText, setAiInputText] = useState('');
-  const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTimePicker, setActiveTimePicker] = useState<'origin' | 'dest' | 'stop' | null>(null);
 
@@ -39,34 +38,7 @@ const ContributeModal: React.FC<ContributeModalProps> = ({ onClose, onSuccess })
     }
   };
 
-  const handleAIAnalyze = async () => {
-    if (!aiInputText && !imagePreview) return;
-    setIsAiAnalyzing(true);
-    try {
-      let input: any = aiInputText;
-      if (imagePreview) {
-          const base64Data = imagePreview.split(',')[1];
-          input = { data: base64Data, mimeType: 'image/jpeg' };
-      }
-      const result = await analyzeRouteWithAI(input);
-      if (result) {
-        setNewCarrierName(result.carrierName || '');
-        setNewOrigin(result.origin || '');
-        setNewOriginTime(result.departureTime || '');
-        setNewDest(result.destination || '');
-        setNewDestTime(result.arrivalTime || '');
-        if (result.price) setNewPrice(result.price.toString());
-        if (result.intermediateStops && Array.isArray(result.intermediateStops)) {
-            setNewIntermediateStops(result.intermediateStops.map((s: string) => ({ name: s, time: '--:--' })));
-        }
-      } else {
-          alert("Không thể trích xuất thông tin. Vui lòng thử lại hoặc nhập thủ công.");
-      }
-    } catch (e) {
-        console.error(e);
-        alert("Đã xảy ra lỗi khi phân tích AI.");
-    } finally { setIsAiAnalyzing(false); }
-  };
+
 
   const handleAddStop = () => {
     if (currentStopName.trim()) {
@@ -138,24 +110,11 @@ const ContributeModal: React.FC<ContributeModalProps> = ({ onClose, onSuccess })
           </button>
         </div>
         <div className="p-8 overflow-y-auto space-y-8 custom-scrollbar">
-          <div className="glass rounded-3xl p-6 space-y-4 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="flex items-center gap-3 mb-2 relative z-10">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-                <div><h3 className="text-lg font-black text-slate-800 leading-none">AI Magic Import</h3><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tự động điền thông tin và giá</p></div>
-            </div>
-            <div className="flex flex-col md:flex-row gap-4 relative z-10">
-                <div className="flex-1">
-                    <textarea value={aiInputText} onChange={(e) => setAiInputText(e.target.value)} placeholder="Dán nội dung tin nhắn, bài đăng Facebook của nhà xe vào đây..." className="w-full h-28 p-5 text-sm rounded-2xl glass-input font-medium resize-none" />
-                </div>
-                <div className="shrink-0 flex flex-col gap-3">
-                    <label className="flex flex-col items-center justify-center cursor-pointer group glass-input rounded-2xl w-28 h-28 hover:bg-white/60 transition-all overflow-hidden relative">
-                        {imagePreview ? (<img src={imagePreview} className="w-full h-full object-cover" />) : (<><svg className="w-8 h-8 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span className="text-[10px] font-black text-slate-400 uppercase text-center px-2">Ảnh xe / Card</span></>)}
-                        <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                    </label>
-                    <button type="button" onClick={handleAIAnalyze} disabled={isAiAnalyzing || (!aiInputText && !imagePreview)} className="bg-slate-900 text-white font-black py-3 rounded-2xl text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-all active:scale-95 disabled:opacity-50">{isAiAnalyzing ? 'Đang đọc...' : 'Phân tích'}</button>
-                </div>
-            </div>
+          <div className="flex justify-center mb-4">
+              <label className="flex flex-col items-center justify-center cursor-pointer group glass-input rounded-2xl w-28 h-28 hover:bg-white/60 transition-all overflow-hidden relative shadow-sm border border-slate-200">
+                  {imagePreview ? (<img src={imagePreview} className="w-full h-full object-cover" />) : (<><svg className="w-8 h-8 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span className="text-[10px] font-black text-slate-400 uppercase text-center px-2">Ảnh xe / Card</span></>)}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+              </label>
           </div>
 
           <form onSubmit={handleContribute} className="space-y-8">
