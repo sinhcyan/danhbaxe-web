@@ -8,6 +8,7 @@ import AdminRouteForm from '../components/admin/AdminRouteForm';
 import AdminLayout from '../components/layouts/AdminLayout';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
+import { generateUUID } from '../utils/helpers';
 
 const AdminDashboard: React.FC = () => {
     const [routes, setRoutes] = useState<Route[]>([]);
@@ -110,7 +111,7 @@ const AdminDashboard: React.FC = () => {
 
                 alert(role === 'admin' ? 'Đã cập nhật thành công!' : 'Đã cập nhật! Tuyến xe đang chờ duyệt lại.');
             } else {
-                const carrierId = crypto.randomUUID();
+                const carrierId = generateUUID();
                 const newCarrier: Carrier = {
                     id: carrierId,
                     name: formData.carrierName,
@@ -121,7 +122,7 @@ const AdminDashboard: React.FC = () => {
                     creator_id: userId || undefined
                 };
                 const newRoute: Route = {
-                    id: crypto.randomUUID(),
+                    id: generateUUID(),
                     carrier_id: carrierId,
                     ...routeDataForUpdate,
                     description: `Tạo bởi ${role}`,
